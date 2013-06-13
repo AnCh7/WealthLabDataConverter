@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WealthLabDataConverter.Library", "WealthLabDataConverter\WealthLabDataConverter.Library.csproj", "{B91C74C3-39E8-4ABB-9137-B6F88A24E83C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WealthLabDataConverter", "WealthLabDataConverter.UI\WealthLabDataConverter.csproj", "{6DB0D0F7-16C6-4E7E-B4B1-FB898219B436}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WealthLabDataConverter.Test", "WealthLabDataConverter.Test\WealthLabDataConverter.Test.csproj", "{031B7182-DD36-4644-879E-3342E6ADD8E9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E38D92CA-D3BF-4333-BFAF-1FAC6B83DD27}"
+	ProjectSection(SolutionItems) = preProject
+		.nuget\packages.config = .nuget\packages.config
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{B91C74C3-39E8-4ABB-9137-B6F88A24E83C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B91C74C3-39E8-4ABB-9137-B6F88A24E83C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B91C74C3-39E8-4ABB-9137-B6F88A24E83C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B91C74C3-39E8-4ABB-9137-B6F88A24E83C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6DB0D0F7-16C6-4E7E-B4B1-FB898219B436}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6DB0D0F7-16C6-4E7E-B4B1-FB898219B436}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6DB0D0F7-16C6-4E7E-B4B1-FB898219B436}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6DB0D0F7-16C6-4E7E-B4B1-FB898219B436}.Release|Any CPU.Build.0 = Release|Any CPU
+		{031B7182-DD36-4644-879E-3342E6ADD8E9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{031B7182-DD36-4644-879E-3342E6ADD8E9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{031B7182-DD36-4644-879E-3342E6ADD8E9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{031B7182-DD36-4644-879E-3342E6ADD8E9}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal
