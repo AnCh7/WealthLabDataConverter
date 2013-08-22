@@ -3,7 +3,7 @@
 // WealthLabDataConverter/WealthLabDataConverter.Library/DependencyFactory.cs
 // 
 // Last updated:
-// 2013-06-13 11:55 AM
+// 2013-08-21 4:24 PM
 // =================================================
 
 #region Usings
@@ -36,9 +36,10 @@ namespace WealthLabDataConverter.Library.DI
 
 			Container.RegisterType<IAppender, RichTextBoxAppender>(new ContainerControlledLifetimeManager());
 			Container.RegisterType<IMyLogger, MyLogger>(new ContainerControlledLifetimeManager());
-			Container.RegisterType<IDataConverter, DataConverter>(new ContainerControlledLifetimeManager());
+			Container.RegisterType<IPathHelper, PathHelper>(new ContainerControlledLifetimeManager());
 
-			Container.RegisterInstance(new PathHelper(), new ContainerControlledLifetimeManager());
+			Container.RegisterType<IDataConverter, QuotesDataConverter>("Quotes", new ContainerControlledLifetimeManager());
+			Container.RegisterType<IDataConverter, FundamentalDataConverter>("Fundamental", new ContainerControlledLifetimeManager());
 		}
 
 		/// <summary>

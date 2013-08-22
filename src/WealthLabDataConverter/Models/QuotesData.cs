@@ -1,9 +1,9 @@
 ﻿// =================================================
 // File:
-// WealthLabDataConverter/WealthLabDataConverter.Library/MarketData.cs
+// WealthLabDataConverter/WealthLabDataConverter.Library/QuotesData.cs
 // 
 // Last updated:
-// 2013-06-13 11:56 AM
+// 2013-08-18 9:36 PM
 // =================================================
 
 #region Usings
@@ -14,7 +14,7 @@ using System;
 
 namespace WealthLabDataConverter.Library.Models
 {
-	public class MarketData
+	public class QuotesData
 	{
 		public DateTime DateTime { get; set; }
 		public double Open { get; set; }

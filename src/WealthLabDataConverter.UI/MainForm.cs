@@ -3,7 +3,7 @@
 // WealthLabDataConverter/WealthLabDataConverter/MainForm.cs
 // 
 // Last updated:
-// 2013-06-13 12:41 PM
+// 2013-08-22 12:48 AM
 // =================================================
 
 #region Usings
@@ -29,9 +29,12 @@ namespace WealthLabDataConverter
 {
 	public partial class MainForm : Form
 	{
-		private DataConverter _converter;
-		private MyLogger _logger;
+		private IMyLogger _logger;
+
 		private PathHelper _pathHelper;
+		private QuotesDataConverter _quotesDataConverter;
+		private FundamentalDataConverter _fundamentalDataConverter;
+
 		private CancellationTokenSource _token;
 
 		public MainForm()
@@ -51,10 +54,15 @@ namespace WealthLabDataConverter
 				if (_pathHelper.IsValidPath(tbInputFolder.Text))
 				{
 					var parameters = LoadProgramParameters();
-					var fileNames = GetFilenamesList(parameters.InputPath);
-					var result = await ConvertDataAsync(parameters, fileNames);
 
-					_logger.Info(result);
+					var quotesFiles = GetQuotesFiles(parameters.InputPath);
+					var fundamentalFiles = GetFundamentalFiles(parameters.InputPath, parameters.FundamentalProviders);
+
+					var quotesResult = await ConvertQuotesAsync(parameters, quotesFiles);
+					_logger.Info(quotesResult);
+
+					var fundamentalsResult = await ConvertFundamentalsAsync(parameters, fundamentalFiles);
+					_logger.Info(fundamentalsResult);
 				}
 			}
 
@@ -64,6 +72,11 @@ namespace WealthLabDataConverter
 		private void btnStop_Click(object sender, EventArgs e)
 		{
 			_token.Cancel();
+		}
+		
+		private void btnClean_Click(object sender, EventArgs e)
+		{
+			rtbLog.Clear();
 		}
 
 		private void btnOutputFolderDialog_Click(object sender, EventArgs e)
@@ -82,7 +95,7 @@ namespace WealthLabDataConverter
 
 		#region Private
 
-		private IEnumerable<string> GetFilenamesList(string folder)
+		private IEnumerable<string> GetQuotesFiles(string folder)
 		{
 			var files = new List<string>();
 
@@ -94,6 +107,28 @@ namespace WealthLabDataConverter
 			catch (Exception ex)
 			{
 				_logger.Info(string.Format("Error {0}", ex.Message));
+			}
+
+			return files;
+		}
+
+		private Dictionary<string, List<string>> GetFundamentalFiles(string folder, IEnumerable<string> fundamentalProviders)
+		{
+			var files = new Dictionary<string, List<string>>();
+
+			foreach (var pr in fundamentalProviders)
+			{
+				try
+				{
+					var newFolder = folder + "\\" + pr;
+					var fList = new List<string>(Directory.GetFiles(newFolder, "*.WLF", SearchOption.AllDirectories));
+					_logger.Info(string.Format("Found {0} fundamental files for {1} provider", fList.Count, pr));
+					files.Add(pr, fList);
+				}
+				catch (Exception ex)
+				{
+					_logger.Info(string.Format("Error {0}", ex.Message));
+				}
 			}
 
 			return files;
@@ -126,16 +161,52 @@ namespace WealthLabDataConverter
 			parameters.OHLCFormat = cbOHLC.Text;
 			parameters.VFormat = cbVolume.Text;
 
+			ReadCheckboxes(parameters);
+
 			return parameters;
+		}
+
+		private void ReadCheckboxes(Parameters parameters)
+		{
+			if (cbAnalystRatings.Checked)
+			{
+				parameters.FundamentalProviders.Add(cbAnalystRatings.Text);
+			}
+
+			if (cbEconomics.Checked)
+			{
+				parameters.FundamentalProviders.Add(cbEconomics.Text);
+			}
+
+			if (cbEstimatedEarnings.Checked)
+			{
+				parameters.FundamentalProviders.Add(cbEstimatedEarnings.Text);
+			}
+
+			if (cbSecuritySentiment.Checked)
+			{
+				parameters.FundamentalProviders.Add(cbSecuritySentiment.Text);
+			}
+
+			if (cbFMDFundamental.Checked)
+			{
+				parameters.FundamentalProviders.Add(cbFMDFundamental.Text);
+			}
+
+			if (cbWSODFundamental.Checked)
+			{
+				parameters.FundamentalProviders.Add(cbWSODFundamental.Text);
+			}
 		}
 
 		private void InitDependencies()
 		{
 			DependencyFactory.Container.RegisterInstance(new RichTextBoxAppender(rtbLog));
 
-			_logger =
-				(MyLogger)DependencyFactory.Container.Resolve<IMyLogger>(new ParameterOverride("currentClassName", "MainForm"));
-			_converter = (DataConverter)DependencyFactory.Container.Resolve<IDataConverter>();
+			_logger = DependencyFactory.Container.Resolve<IMyLogger>(new ParameterOverride("currentClassName", "MainForm"));
+			_quotesDataConverter = (QuotesDataConverter)DependencyFactory.Container.Resolve<IDataConverter>("Quotes");
+			_fundamentalDataConverter =
+				(FundamentalDataConverter)DependencyFactory.Container.Resolve<IDataConverter>("Fundamental");
 			_pathHelper = DependencyFactory.Container.Resolve<PathHelper>();
 		}
 
@@ -143,6 +214,7 @@ namespace WealthLabDataConverter
 		{
 			const string defaultPath = @"\Fidelity Investments\WealthLabPro\1.0.0.0\Data\FidelityStaticProvider";
 			tbInputFolder.Text = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + defaultPath;
+
 			tbOutputFolder.Text = @"C:\Output";
 
 			cbDTFormatDate.SelectedIndex = 0;
@@ -152,6 +224,13 @@ namespace WealthLabDataConverter
 			cbFileFormat.SelectedIndex = 0;
 			cbOHLC.SelectedIndex = 2;
 			cbVolume.SelectedIndex = 0;
+
+			cbAnalystRatings.Checked = true;
+			cbEconomics.Checked = true;
+			cbEstimatedEarnings.Checked = true;
+			cbSecuritySentiment.Checked = true;
+			cbFMDFundamental.Checked = true;
+			cbWSODFundamental.Checked = true;
 		}
 
 		private void UnlockControls()
@@ -171,6 +250,13 @@ namespace WealthLabDataConverter
 			cbVolume.Enabled = true;
 
 			btnStart.Enabled = true;
+
+			cbAnalystRatings.Enabled = true;
+			cbEconomics.Enabled = true;
+			cbEstimatedEarnings.Enabled = true;
+			cbSecuritySentiment.Enabled = true;
+			cbFMDFundamental.Enabled = true;
+			cbWSODFundamental.Enabled = true;
 		}
 
 		private void LockControls()
@@ -189,6 +275,13 @@ namespace WealthLabDataConverter
 			cbVolume.Enabled = false;
 
 			btnStart.Enabled = false;
+
+			cbAnalystRatings.Enabled = false;
+			cbEconomics.Enabled = false;
+			cbEstimatedEarnings.Enabled = false;
+			cbSecuritySentiment.Enabled = false;
+			cbFMDFundamental.Enabled = false;
+			cbWSODFundamental.Enabled = false;
 		}
 
 		private bool CheckSavePath(string pathName)
@@ -213,13 +306,19 @@ namespace WealthLabDataConverter
 			_token = new CancellationTokenSource();
 		}
 
-		private async Task<string> ConvertDataAsync(Parameters parameters, IEnumerable<string> fileNames)
+		private async Task<string> ConvertQuotesAsync(Parameters parameters, IEnumerable<string> fileNames)
 		{
-			await Task.Factory.StartNew(() => ProcessAsync(parameters, fileNames));
-			return "Done";
+			var result = await Task.Factory.StartNew(() => ProcessQuotesAsync(parameters, fileNames));
+			return result;
 		}
 
-		private void ProcessAsync(Parameters parameters, IEnumerable<string> fileNames)
+		private async Task<string> ConvertFundamentalsAsync(Parameters parameters, Dictionary<string, List<string>> fileNames)
+		{
+			var result = await Task.Factory.StartNew(() => ProcessFundamentalsAsync(parameters, fileNames));
+			return result;
+		}
+
+		private string ProcessQuotesAsync(Parameters parameters, IEnumerable<string> fileNames)
 		{
 			foreach (var filename in fileNames)
 			{
@@ -229,16 +328,46 @@ namespace WealthLabDataConverter
 				{
 					_logger.Info("Stopping proccess...");
 					InitAsyncRelated();
-					return;
+					return "Canceled";
 				}
 
 				string securityName;
 				string timeFrameName;
 				int timeFrameInterval;
 
-				var data = _converter.LoadFromFile(filename, out securityName, out timeFrameName, out timeFrameInterval);
-				_converter.SaveToFile(data, parameters, securityName, timeFrameName, timeFrameInterval);
+				var data = _quotesDataConverter.ProcessDataFromFile(filename,
+																	out securityName,
+																	out timeFrameName,
+																	out timeFrameInterval);
+
+				_quotesDataConverter.SaveToFile(data, parameters, securityName, timeFrameName, timeFrameInterval);
 			}
+
+			return "Quotes parsed";
+		}
+
+		private string ProcessFundamentalsAsync(Parameters parameters, Dictionary<string, List<string>> fundamentals)
+		{
+			foreach (var provider in fundamentals)
+			{
+				foreach (var file in provider.Value)
+				{
+					var security = Path.GetFileNameWithoutExtension(file);
+					_logger.Info(String.Format("Converting symbol: {0}", security));
+
+					if (_token.IsCancellationRequested)
+					{
+						_logger.Info("Stopping proccess...");
+						InitAsyncRelated();
+						return "Canceled";
+					}
+
+					var data = _fundamentalDataConverter.ProcessDataFromFile(file, provider.Key);
+					_fundamentalDataConverter.SaveToFile(data, parameters, provider.Key, security);
+				}
+			}
+
+			return "Fundamentals parsed";
 		}
 
 		#endregion Async

@@ -54,16 +54,28 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Core\FundamentalDataConverter.cs" />
     <Compile Include="Core\IDataConverter.cs" />
     <Compile Include="DI\DependencyFactory.cs" />
+    <Compile Include="Helpers\IPathHelper.cs" />
     <Compile Include="Logging\RichTextBoxAppender.cs" />
     <Compile Include="Logging\IMyLogger.cs" />
     <Compile Include="Logging\MyLogger.cs" />
+    <Compile Include="Models\Fundamental\Split.cs" />
+    <Compile Include="Models\Fundamental\Dividend.cs" />
+    <Compile Include="Models\Fundamental\Base\FundamentalBase.cs" />
+    <Compile Include="Models\Fundamental\AnalystRating.cs" />
+    <Compile Include="Models\Fundamental\EarningsPerShare.cs" />
+    <Compile Include="Models\Fundamental\Economics.cs" />
+    <Compile Include="Models\Fundamental\EstimatedEarnings.cs" />
+    <Compile Include="Models\Fundamental\Fundamentals.cs" />
+    <Compile Include="Models\Fundamental\InsiderTransaction.cs" />
+    <Compile Include="Models\Fundamental\ShortInterest.cs" />
     <Compile Include="Models\TimeFrame.cs" />
     <Compile Include="Helpers\PathHelper.cs" />
-    <Compile Include="Models\MarketData.cs" />
+    <Compile Include="Models\QuotesData.cs" />
     <Compile Include="Models\Parameters.cs" />
-    <Compile Include="Core\DataConverter.cs" />
+    <Compile Include="Core\QuotesDataConverter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

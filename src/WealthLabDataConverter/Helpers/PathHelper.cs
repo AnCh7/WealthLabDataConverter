@@ -3,7 +3,7 @@
 // WealthLabDataConverter/WealthLabDataConverter.Library/PathHelper.cs
 // 
 // Last updated:
-// 2013-06-13 11:55 AM
+// 2013-08-21 4:24 PM
 // =================================================
 
 #region Usings
@@ -16,7 +16,7 @@ using System.IO;
 
 namespace WealthLabDataConverter.Library.Helpers
 {
-	public class PathHelper
+	public class PathHelper : IPathHelper
 	{
 		public bool CreateDirectory(string folder)
 		{

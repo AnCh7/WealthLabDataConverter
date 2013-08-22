@@ -1,9 +1,9 @@
 ﻿// =================================================
 // File:
-// WealthLabDataConverter/WealthLabDataConverter.Library/DataConverter.cs
+// WealthLabDataConverter/WealthLabDataConverter.Library/QuotesDataConverter.cs
 // 
 // Last updated:
-// 2013-06-13 11:51 AM
+// 2013-08-22 5:40 PM
 // =================================================
 
 #region Usings
@@ -19,22 +19,22 @@ using WealthLabDataConverter.Library.Models;
 
 namespace WealthLabDataConverter.Library.Core
 {
-	public class DataConverter : IDataConverter
+	public class QuotesDataConverter : IDataConverter
 	{
 		private readonly List<DateTime> _listDateTime = new List<DateTime>();
 		private readonly PathHelper _pathHelper;
 
-		public DataConverter(PathHelper pathHelper)
+		public QuotesDataConverter(PathHelper pathHelper)
 		{
 			_pathHelper = pathHelper;
 		}
 
-		public List<MarketData> LoadFromFile(string fileName,
-											  out string securityName,
-											  out string timeFrameName,
-											  out int timeFrameInterval)
+		public List<QuotesData> ProcessDataFromFile(string fileName,
+													out string securityName,
+													out string timeFrameName,
+													out int timeFrameInterval)
 		{
-			var data = new List<MarketData>();
+			var data = new List<QuotesData>();
 
 			using (var input = File.Open(fileName, FileMode.Open, FileAccess.Read, FileShare.Read))
 			{
@@ -72,7 +72,7 @@ namespace WealthLabDataConverter.Library.Core
 
 					while (value2 > 0)
 					{
-						var md = new MarketData();
+						var md = new QuotesData();
 
 						md.DateTime = new DateTime(reader.ReadInt64());
 						md.Open = reader.ReadDouble();
@@ -91,7 +91,7 @@ namespace WealthLabDataConverter.Library.Core
 			return data;
 		}
 
-		public void SaveToFile(List<MarketData> data,
+		public void SaveToFile(List<QuotesData> data,
 							   Parameters p,
 							   string securityName,
 							   string timeFrameName,
@@ -115,21 +115,17 @@ namespace WealthLabDataConverter.Library.Core
 						dt = d.DateTime.ToString(p.DateFormat + p.DateTimeDelimiter + p.TimeFormat);
 					}
 
-					streamWriter.WriteLine(dt + p.Delimiter +
-										   d.Open.ToString(p.OHLCFormat) + p.Delimiter +
-										   d.High.ToString(p.OHLCFormat) + p.Delimiter +
-										   d.Low.ToString(p.OHLCFormat) + p.Delimiter +
-										   d.Close.ToString(p.OHLCFormat) + p.Delimiter +
-										   d.Volume.ToString(p.VFormat));
+					streamWriter.WriteLine(dt + p.Delimiter + d.Open.ToString(p.OHLCFormat) + p.Delimiter +
+										   d.High.ToString(p.OHLCFormat) + p.Delimiter + d.Low.ToString(p.OHLCFormat) + p.Delimiter +
+										   d.Close.ToString(p.OHLCFormat) + p.Delimiter + d.Volume.ToString(p.VFormat));
 				}
 			}
 		}
 
 		private string ConstructSavePath(Parameters p, string securityName, string timeFrameName, int timeFrameInterval)
 		{
-			const string slash = "\\";
-
 			var pathToFolder = p.OutputPath;
+			const string dataTypeFolder = "Quotes";
 			string timeFramePath;
 			var symbolName = securityName;
 			var fileExtension = p.FileExtension;
@@ -145,7 +141,8 @@ namespace WealthLabDataConverter.Library.Core
 
 			var firstLetterOfSymbol = securityName.Substring(0, 1);
 
-			return pathToFolder + slash + timeFramePath + slash + firstLetterOfSymbol + slash + symbolName + fileExtension;
+			return pathToFolder + "\\" + dataTypeFolder + "\\" + timeFramePath + "\\" + firstLetterOfSymbol + "\\" + symbolName +
+				   fileExtension;
 		}
 	}
 }

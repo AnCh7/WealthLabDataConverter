@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>WealthLabDataConverter.Test</RootNamespace>
     <AssemblyName>WealthLabDataConverter.Test</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -20,6 +21,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,6 +30,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="nunit.framework">
@@ -46,17 +49,23 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="ConverterTests.cs" />
+    <Compile Include="FundamentalDataConverterTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\WealthLabDataConverter\WealthLabDataConverter.Library.csproj">
-      <Project>{B91C74C3-39E8-4ABB-9137-B6F88A24E83C}</Project>
-      <Name>WealthLabDataConverter.Library</Name>
-    </ProjectReference>
+    <None Include="FundamentalData\FidelityFMDFundamentalProvider_ABCB.WLF" />
+    <None Include="FundamentalData\FidelityWSODAnalystRatingsProvider_AAPL.WLF" />
+    <None Include="FundamentalData\FidelityWSODEstimatedEarningsProvider_AKAM.WLF" />
+    <None Include="FundamentalData\FidelityWSODFundamentalProvider_ACAS.WLF" />
+    <None Include="FundamentalData\FidelityWSODSecuritySentimentProvider_AAPL.WLF" />
+    <None Include="packages.config" />
+    <None Include="QoutesData\AAPL.WL" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="packages.config" />
-    <None Include="TestData\AAPL.WL" />
+    <ProjectReference Include="..\WealthLabDataConverter\WealthLabDataConverter.Library.csproj">
+      <Project>{b91c74c3-39e8-4abb-9137-b6f88a24e83c}</Project>
+      <Name>WealthLabDataConverter.Library</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
